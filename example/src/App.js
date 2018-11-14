@@ -17,7 +17,7 @@ export default class App extends Component {
       const col = [];
       for (let j = 0; j < colNumber; j++) {
         col.push({
-          v: `${i}+${j}`
+          v: `${i}~${j}`
         });
       }
       data.push(col);

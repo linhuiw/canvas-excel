@@ -1,5 +1,6 @@
 /**
- * 绘制 Excel 表格
+ * @author linhuiw
+ * @desc 绘制 Excel 表格
  */
 import { ExcelConfig, CellData } from './types';
 

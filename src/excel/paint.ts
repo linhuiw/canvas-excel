@@ -3,6 +3,7 @@
  * @desc 绘制 Excel 表格
  */
 import { ExcelConfig, CellData } from './types';
+import { CELL_WIDTH, CELL_HEIGHT } from './const';
 
 class Paint {
   config: ExcelConfig;
@@ -24,18 +25,15 @@ class Paint {
    * 渲染单元格
    */
   paintCell(cell: CellData, rowNumber: number, colNumber: number) {
-    // console.log(cell, '------');
-    const cw = 80;
-    const ch = 50;
-    const startX = rowNumber * cw;
-    const startY = colNumber * ch;
-    this.canvasContext.rect(startX, startY, cw, ch);
+    const startX = rowNumber * CELL_WIDTH;
+    const startY = colNumber * CELL_HEIGHT;
+    this.canvasContext.rect(startX, startY, CELL_WIDTH, CELL_HEIGHT);
     this.canvasContext.stroke();
     this.canvasContext.fillText(
       String(cell.v),
-      startX + cw / 2,
-      startY + ch / 2,
-      cw
+      startX + CELL_WIDTH / 2,
+      startY + CELL_HEIGHT / 2,
+      CELL_WIDTH
     );
   }
   /**

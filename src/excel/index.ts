@@ -2,9 +2,11 @@
  * @author 五灵
  * @desc 初始化 Excel
  */
+import * as _ from 'lodash';
 import { ExcelConfig } from './types';
 import { DEFAULT_CONFIG } from './config';
 import { Paint } from './paint';
+import { CELL_WIDTH, CELL_HEIGHT } from './const';
 
 class Excel {
   config: ExcelConfig;
@@ -44,6 +46,18 @@ class Excel {
   getRatio() {
     const devicePixelRatio = window.devicePixelRatio || 1;
     return devicePixelRatio;
+  }
+  /**
+   * 获取画布的最大高度和宽度
+   */
+  getContainerRect() {
+    const { data } = this.config;
+    const rows = data.length;
+    const cols = _.get(data, [0, 'length'], 0);
+    return {
+      width: cols * CELL_WIDTH,
+      height: rows * CELL_HEIGHT
+    };
   }
 }
 

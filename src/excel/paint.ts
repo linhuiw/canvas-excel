@@ -32,9 +32,9 @@ class Paint {
     this.canvasContext.clearRect(0, 0, width, height);
   }
   /**
-   * 渲染单元格
+   *
    */
-  paintCell(cell: CellData) {
+  getStartXY(cell: CellData) {
     const { offset, freezeCol, freezeRow } = this.config;
     let startX, startY;
     if (cell._colIndex < freezeCol) {
@@ -48,7 +48,31 @@ class Paint {
     } else {
       startY = cell._rowIndex * CELL_HEIGHT - offset.top;
     }
-    this.canvasContext.rect(startX, startY, CELL_WIDTH, CELL_HEIGHT);
+    return {
+      startX,
+      startY
+    };
+  }
+  /**
+   * 渲染单元格内容
+   */
+  paintCell(cell: CellData) {
+    const { freezeCol, freezeRow } = this.config;
+    const { startX, startY } = this.getStartXY(cell);
+
+    if (cell._colIndex < freezeCol || cell._rowIndex < freezeRow) {
+      /** 渲染冻结区域的背景 */
+      this.canvasContext.fillStyle = '#FFF';
+      /** 填满除边框外区域 */
+      this.canvasContext.fillRect(
+        startX + 1,
+        startY + 1,
+        CELL_WIDTH - 2,
+        CELL_HEIGHT - 2
+      );
+    }
+    // this.canvasContext.rect(startX, startY, CELL_WIDTH, CELL_HEIGHT);
+    this.canvasContext.fillStyle = '#000';
     this.canvasContext.fillText(
       String(cell.v),
       startX + CELL_WIDTH / 2,
@@ -61,15 +85,43 @@ class Paint {
    */
   paintCells() {
     const data = filterData(this.config);
-    console.log(data, 'data');
-    this.canvasContext.beginPath();
-    for (let rowNumber = 0; rowNumber < data.length; rowNumber++) {
+    this.canvasContext.save();
+    this.paintLines(data);
+    /** 从最后开始渲染，保障冻结得行列在最上面 */
+    for (let rowNumber = data.length - 1; rowNumber >= 0; rowNumber--) {
       const row = data[rowNumber];
-      for (let colNumber = 0; colNumber < row.length; colNumber++) {
+      for (let colNumber = row.length - 1; colNumber >= 0; colNumber--) {
         const cell = row[colNumber];
         this.paintCell(cell);
       }
     }
+    this.canvasContext.restore();
+  }
+  /**
+   * 渲染表格线
+   * @param data
+   */
+  paintLines(data: CellData[][]) {
+    const { width, height, containerRect } = this.config;
+    this.canvasContext.beginPath();
+    /** 绘制外边框 */
+    this.canvasContext.moveTo(0, 0);
+    this.canvasContext.lineTo(0, containerRect.height);
+    this.canvasContext.lineTo(containerRect.width, containerRect.height);
+    this.canvasContext.lineTo(containerRect.width, 0);
+    this.canvasContext.lineTo(0, 0);
+    /** 绘制横线 */
+    data.map(row => {
+      const { startY } = this.getStartXY(row[0]);
+      this.canvasContext.moveTo(0 + 0.5, startY);
+      this.canvasContext.lineTo(width + 0.5, startY);
+    });
+    /** 绘制竖线 */
+    data[0].map(col => {
+      const { startX } = this.getStartXY(col);
+      this.canvasContext.moveTo(startX, 0 + 0.5);
+      this.canvasContext.lineTo(startX, height + 0.5);
+    });
     this.canvasContext.stroke();
   }
   /**

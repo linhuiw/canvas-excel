@@ -9,9 +9,11 @@ import { DEFAULT_CONFIG } from './config';
  * 预处理数据
  * @param data
  */
-const pretreatmentData = function(data: CellData[][] | undefined) {
+const pretreatmentData = function(
+  data: CellData[][] | undefined
+): CellData[][] {
   if (!data) {
-    return DEFAULT_CONFIG.data;
+    return DEFAULT_CONFIG.data as CellData[][];
   }
   return data.map((row: CellData[], rowIndex: number) => {
     return row.map((cell: CellData, colIndex: number) => {

@@ -41,7 +41,7 @@ export default class ExcelComponent extends React.Component<Props> {
       container
     });
     this.setState({
-      containerRect: this.excelInstance.getContainerRect()
+      containerRect: this.excelInstance.config.containerRect
     });
   }
   /**

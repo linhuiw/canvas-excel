@@ -32,6 +32,11 @@ interface ExcelConfig {
     top: number;
     left: number;
   };
+  /** 所有单元格占得宽高 */
+  containerRect: {
+    width: number;
+    height: number;
+  };
 }
 
 /**

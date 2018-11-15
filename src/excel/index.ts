@@ -15,10 +15,12 @@ class Excel {
   canvasContext: CanvasRenderingContext2D;
   paintInstance: Paint;
   constructor(config: Partial<ExcelConfig>) {
+    const data = pretreatmentData(config.data);
     this.config = {
       ...DEFAULT_CONFIG,
       ...config,
-      data: pretreatmentData(config.data)
+      data,
+      containerRect: this.getContainerRect(data)
     } as ExcelConfig;
     this.initCanvas();
     this.addClickEvent();
@@ -43,7 +45,6 @@ class Excel {
     this.canvasContext.textBaseline = 'middle';
     this.canvasContext.strokeStyle = lineColor;
     this.canvasContext.textAlign = 'center';
-    this.canvasContext.save();
   }
   /**
    * 获取Ratio，处理高清屏模糊问题
@@ -55,8 +56,7 @@ class Excel {
   /**
    * 获取画布的最大高度和宽度
    */
-  getContainerRect() {
-    const { data } = this.config;
+  getContainerRect(data: CellData[][]) {
     const rows = data.length;
     const cols = _.get(data, [0, 'length'], 0);
     return {

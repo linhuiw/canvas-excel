@@ -34,19 +34,19 @@ class Paint {
   /**
    *
    */
-  getStartXY(cell: CellData) {
+  getStartXY(colIndex: number, rowIndex: number) {
     const { offset, freezeCol, freezeRow } = this.config;
     let startX, startY;
-    if (cell._colIndex < freezeCol) {
-      startX = cell._colIndex * CELL_WIDTH;
+    if (colIndex < freezeCol) {
+      startX = colIndex * CELL_WIDTH;
     } else {
-      startX = cell._colIndex * CELL_WIDTH - offset.left;
+      startX = colIndex * CELL_WIDTH - offset.left;
     }
-    if (cell._rowIndex < freezeRow) {
+    if (rowIndex < freezeRow) {
       /** 冻结行 */
-      startY = cell._rowIndex * CELL_HEIGHT;
+      startY = rowIndex * CELL_HEIGHT;
     } else {
-      startY = cell._rowIndex * CELL_HEIGHT - offset.top;
+      startY = rowIndex * CELL_HEIGHT - offset.top;
     }
     return {
       startX,
@@ -58,7 +58,7 @@ class Paint {
    */
   paintCell(cell: CellData) {
     const { freezeCol, freezeRow } = this.config;
-    const { startX, startY } = this.getStartXY(cell);
+    const { startX, startY } = this.getStartXY(cell._colIndex, cell._rowIndex);
 
     if (cell._colIndex < freezeCol || cell._rowIndex < freezeRow) {
       /** 渲染冻结区域的背景 */
@@ -96,13 +96,14 @@ class Paint {
       }
     }
     this.canvasContext.restore();
+    this.paintFreezeLines();
   }
   /**
    * 渲染表格线
    * @param data
    */
   paintLines(data: CellData[][]) {
-    const { width, height, containerRect } = this.config;
+    const { width, height, containerRect, lineColor } = this.config;
     this.canvasContext.beginPath();
     /** 绘制外边框 */
     this.canvasContext.moveTo(0, 0);
@@ -112,17 +113,34 @@ class Paint {
     this.canvasContext.lineTo(0, 0);
     /** 绘制横线 */
     data.map(row => {
-      const { startY } = this.getStartXY(row[0]);
-      this.canvasContext.moveTo(0 + 0.5, startY);
+      const { startY } = this.getStartXY(row[0]._colIndex, row[0]._rowIndex);
+      this.canvasContext.moveTo(0.5, startY);
       this.canvasContext.lineTo(width + 0.5, startY);
     });
     /** 绘制竖线 */
     data[0].map(col => {
-      const { startX } = this.getStartXY(col);
-      this.canvasContext.moveTo(startX, 0 + 0.5);
+      const { startX } = this.getStartXY(col._colIndex, col._rowIndex);
+      this.canvasContext.moveTo(startX, 0.5);
       this.canvasContext.lineTo(startX, height + 0.5);
     });
     this.canvasContext.stroke();
+  }
+  /**
+   * 绘制冻结表示线
+   */
+  paintFreezeLines() {
+    const { freezeCol, freezeRow, width, height, activeColor } = this.config;
+    const startX = freezeCol * CELL_WIDTH;
+    const startY = freezeRow * CELL_HEIGHT;
+    this.canvasContext.save();
+    this.canvasContext.beginPath();
+    this.canvasContext.strokeStyle = activeColor;
+    this.canvasContext.moveTo(0.5, startY);
+    this.canvasContext.lineTo(width + 0.5, startY);
+    this.canvasContext.moveTo(startX, 0.5);
+    this.canvasContext.lineTo(startX, height + 0.5);
+    this.canvasContext.stroke();
+    this.canvasContext.restore();
   }
   /**
    * 渲染高亮的单元格

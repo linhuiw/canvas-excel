@@ -33,6 +33,10 @@ interface ExcelConfig {
  */
 interface CellData {
   v: string | number;
+  /** 真实的 ColIndex */
+  _colIndex: number;
+  /** 真实的 RowIndex */
+  _rowIndex: number;
 }
 
 export { ExcelConfig, CellData };

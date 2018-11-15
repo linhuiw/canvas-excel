@@ -7,6 +7,7 @@ import { ExcelConfig } from './types';
 import { DEFAULT_CONFIG } from './config';
 import { Paint } from './paint';
 import { CELL_WIDTH, CELL_HEIGHT } from './const';
+import { pretreatmentData } from './data';
 
 class Excel {
   config: ExcelConfig;
@@ -15,7 +16,8 @@ class Excel {
   constructor(config: Partial<ExcelConfig>) {
     this.config = {
       ...DEFAULT_CONFIG,
-      ...config
+      ...config,
+      data: pretreatmentData(config.data)
     } as ExcelConfig;
     this.initCanvas();
   }
@@ -60,6 +62,11 @@ class Excel {
       height: rows * CELL_HEIGHT
     };
   }
+  /**
+   * 设置滚动后的 Offset
+   * @param top
+   * @param left
+   */
   setOffset(top: number, left: number) {
     this.config = {
       ...this.config,
@@ -69,6 +76,9 @@ class Excel {
       }
     };
   }
+  /**
+   * 重新渲染
+   */
   repaint() {
     requestAnimationFrame(() => {
       this.paintInstance.render(this.config);

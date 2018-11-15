@@ -11,6 +11,7 @@ const DEFAULT_CONFIG: Partial<ExcelConfig> = {
   fontSize: 14,
   fontFamily: 'Microsoft YaHei',
   lineColor: '#ededed',
+  activeColor: '#00c1de',
   offset: {
     top: 0,
     left: 0

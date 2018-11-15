@@ -21,6 +21,8 @@ interface ExcelConfig {
   fontFamily: string;
   /** 表格分割线颜色 */
   lineColor: string;
+  /** 表格高亮时的分割线颜色 */
+  activeColor: string;
   /** 滚动偏移量 */
   offset: {
     top: number;

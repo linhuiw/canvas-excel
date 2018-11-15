@@ -61,6 +61,28 @@ class Paint {
     }
     this.canvasContext.stroke();
   }
+  /**
+   * 渲染高亮的单元格
+   */
+  paintActiveCell(cell: CellData) {
+    const { activeColor, offset } = this.config;
+    this.canvasContext.save();
+    this.canvasContext.beginPath();
+    this.canvasContext.strokeStyle = activeColor;
+    this.canvasContext.fillStyle = activeColor;
+    const startX = cell._colIndex * CELL_WIDTH - offset.left;
+    const startY = cell._rowIndex * CELL_HEIGHT - offset.top;
+
+    this.canvasContext.rect(startX, startY, CELL_WIDTH, CELL_HEIGHT);
+    this.canvasContext.fillRect(
+      startX + CELL_WIDTH - 2,
+      startY + CELL_HEIGHT - 2,
+      4,
+      4
+    );
+    this.canvasContext.stroke();
+    this.canvasContext.restore();
+  }
 }
 
 export { Paint };

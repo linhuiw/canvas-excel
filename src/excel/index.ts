@@ -3,11 +3,12 @@
  * @desc 初始化 Excel
  */
 import * as _ from 'lodash';
-import { ExcelConfig } from './types';
+import { ExcelConfig, CellData } from './types';
 import { DEFAULT_CONFIG } from './config';
 import { Paint } from './paint';
 import { CELL_WIDTH, CELL_HEIGHT } from './const';
 import { pretreatmentData } from './data';
+import { xyToIndex } from './utils/';
 
 class Excel {
   config: ExcelConfig;
@@ -20,6 +21,7 @@ class Excel {
       data: pretreatmentData(config.data)
     } as ExcelConfig;
     this.initCanvas();
+    this.addClickEvent();
   }
   /**
    * 初始化画布设置
@@ -79,9 +81,23 @@ class Excel {
   /**
    * 重新渲染
    */
-  repaint() {
+  repaint(cell?: CellData) {
     requestAnimationFrame(() => {
       this.paintInstance.render(this.config);
+      if (cell) {
+        this.paintInstance.paintActiveCell(cell);
+      }
+    });
+  }
+  /**
+   * 添加点击事件
+   */
+  addClickEvent() {
+    const { container } = this.config;
+    container.addEventListener('click', (event: MouseEvent) => {
+      const { offsetX, offsetY } = event;
+      const cell = xyToIndex(offsetX, offsetY, this.config);
+      this.repaint(cell);
     });
   }
 }

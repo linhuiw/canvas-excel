@@ -23,6 +23,8 @@ export default class App extends Component {
       data.push(col);
     };
     return {
+      freezeRow: 1,
+      freezeCol: 1,
       data
     };
   }

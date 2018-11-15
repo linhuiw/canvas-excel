@@ -35,9 +35,19 @@ class Paint {
    * 渲染单元格
    */
   paintCell(cell: CellData) {
-    const { offset } = this.config;
-    const startX = cell._colIndex * CELL_WIDTH - offset.left;
-    const startY = cell._rowIndex * CELL_HEIGHT - offset.top;
+    const { offset, freezeCol, freezeRow } = this.config;
+    let startX, startY;
+    if (cell._colIndex < freezeCol) {
+      startX = cell._colIndex * CELL_WIDTH;
+    } else {
+      startX = cell._colIndex * CELL_WIDTH - offset.left;
+    }
+    if (cell._rowIndex < freezeRow) {
+      /** 冻结行 */
+      startY = cell._rowIndex * CELL_HEIGHT;
+    } else {
+      startY = cell._rowIndex * CELL_HEIGHT - offset.top;
+    }
     this.canvasContext.rect(startX, startY, CELL_WIDTH, CELL_HEIGHT);
     this.canvasContext.fillText(
       String(cell.v),
@@ -51,6 +61,7 @@ class Paint {
    */
   paintCells() {
     const data = filterData(this.config);
+    console.log(data, 'data');
     this.canvasContext.beginPath();
     for (let rowNumber = 0; rowNumber < data.length; rowNumber++) {
       const row = data[rowNumber];

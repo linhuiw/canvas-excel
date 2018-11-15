@@ -11,6 +11,10 @@ interface ExcelConfig {
   width: number;
   /** 画布高度 */
   height: number;
+  /** 冻结行数 */
+  freezeRow: number;
+  /** 冻结列数 */
+  freezeCol: number;
   /** 画布数据 */
   data: CellData[][];
   /** Ecel 渲染容器 */

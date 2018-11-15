@@ -7,6 +7,8 @@ import { ExcelConfig } from './types';
 const DEFAULT_CONFIG: Partial<ExcelConfig> = {
   width: 1000,
   height: 800,
+  freezeCol: 0,
+  freezeRow: 0,
   data: [[]],
   fontSize: 14,
   fontFamily: 'Microsoft YaHei',

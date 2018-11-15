@@ -29,14 +29,19 @@ const pretreatmentData = function(data: CellData[][] | undefined) {
  * @param config
  */
 const filterData = function(config: ExcelConfig) {
-  const { width, height, offset, data } = config;
+  const { width, height, offset, data, freezeCol, freezeRow } = config;
   const { top, left } = offset;
-  const offset_row = Math.floor(top / CELL_HEIGHT);
-  const offset_col = Math.floor(left / CELL_WIDTH);
-  const end_row = Math.ceil((top + height) / CELL_HEIGHT);
-  const end_col = Math.ceil((left + width) / CELL_WIDTH);
-  return data.slice(offset_row, end_row).map(row => {
-    return row.slice(offset_col, end_col);
+  const offset_row = Math.floor(top / CELL_HEIGHT) + freezeRow;
+  const offset_col = Math.floor(left / CELL_WIDTH) + freezeCol;
+  const end_row = Math.ceil((top + height) / CELL_HEIGHT) + freezeRow;
+  const end_col = Math.ceil((left + width) / CELL_WIDTH) + freezeCol;
+  const freezeRows = data.slice(0, freezeRow);
+  const visibleRows = data.slice(offset_row, end_row);
+
+  return freezeRows.concat(visibleRows).map(row => {
+    const freezeCols = row.slice(0, freezeCol);
+    const visibleCols = row.slice(offset_col, end_col);
+    return freezeCols.concat(visibleCols);
   });
 };
 

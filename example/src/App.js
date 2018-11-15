@@ -11,7 +11,7 @@ export default class App extends Component {
   }
   getTestConfig() {
     let data = [];
-    const rowNumber = 100;
+    const rowNumber = 60;
     const colNumber = 50;
     for (let i = 0; i < rowNumber; i++) {
       const col = [];

@@ -21,6 +21,11 @@ interface ExcelConfig {
   fontFamily: string;
   /** 表格分割线颜色 */
   lineColor: string;
+  /** 滚动偏移量 */
+  offset: {
+    top: number;
+    left: number;
+  };
 }
 
 /**

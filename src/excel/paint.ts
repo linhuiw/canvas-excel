@@ -4,6 +4,7 @@
  */
 import { ExcelConfig, CellData } from './types';
 import { CELL_WIDTH, CELL_HEIGHT } from './const';
+import { filterData } from './filterData';
 
 class Paint {
   config: ExcelConfig;
@@ -11,6 +12,15 @@ class Paint {
   constructor(canvasContext: CanvasRenderingContext2D, config: ExcelConfig) {
     this.config = config;
     this.canvasContext = canvasContext;
+    this.render();
+  }
+  /**
+   * 绘制
+   */
+  render(config?: ExcelConfig) {
+    if (config) {
+      this.config = config;
+    }
     this.clear();
     this.paintCells();
   }
@@ -25,10 +35,9 @@ class Paint {
    * 渲染单元格
    */
   paintCell(cell: CellData, rowNumber: number, colNumber: number) {
-    const startX = rowNumber * CELL_WIDTH;
-    const startY = colNumber * CELL_HEIGHT;
+    const startX = colNumber * CELL_WIDTH;
+    const startY = rowNumber * CELL_HEIGHT;
     this.canvasContext.rect(startX, startY, CELL_WIDTH, CELL_HEIGHT);
-    this.canvasContext.stroke();
     this.canvasContext.fillText(
       String(cell.v),
       startX + CELL_WIDTH / 2,
@@ -40,8 +49,7 @@ class Paint {
    * 渲染全部单元格
    */
   paintCells() {
-    console.log(this.config, '=====');
-    const { data } = this.config;
+    const data = filterData(this.config);
     for (let rowNumber = 0; rowNumber < data.length; rowNumber++) {
       const row = data[rowNumber];
       for (let colNumber = 0; colNumber < row.length; colNumber++) {
@@ -49,6 +57,7 @@ class Paint {
         this.paintCell(cell, rowNumber, colNumber);
       }
     }
+    this.canvasContext.stroke();
   }
 }
 

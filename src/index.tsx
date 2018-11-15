@@ -19,8 +19,13 @@ export default class ExcelComponent extends React.Component<Props> {
     containerRect: {
       width: 0,
       height: 0
+    },
+    transform: {
+      top: 0,
+      left: 0
     }
   };
+  excelInstance: Excel;
   constructor(props: Props) {
     super(props);
     this.getContainer = React.createRef();
@@ -31,18 +36,32 @@ export default class ExcelComponent extends React.Component<Props> {
   }
   componentDidMount() {
     const container = this.getContainer.current as HTMLCanvasElement;
-    const excel = new Excel({
+    this.excelInstance = new Excel({
       ...this.config,
       container
     });
-    const containerRect = excel.getContainerRect();
     this.setState({
-      containerRect
+      containerRect: this.excelInstance.getContainerRect()
     });
   }
+  /**
+   * WebExcel 滚动
+   */
+  handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollLeft, scrollTop } = event.currentTarget;
+    this.setState({
+      transform: {
+        top: scrollTop,
+        left: scrollLeft
+      }
+    });
+    this.excelInstance.setOffset(scrollTop, scrollLeft);
+    this.excelInstance.repaint();
+  };
+
   render() {
     const { width, height } = this.config;
-    const { containerRect } = this.state;
+    const { containerRect, transform } = this.state;
 
     return (
       <div
@@ -52,6 +71,7 @@ export default class ExcelComponent extends React.Component<Props> {
           height,
           overflow: 'auto'
         }}
+        onScroll={this.handleScroll}
       >
         <div
           className="large-container"
@@ -66,7 +86,7 @@ export default class ExcelComponent extends React.Component<Props> {
             style={{
               width,
               height,
-              transform: 'translate(0px, 0px)'
+              transform: `translate(${transform.left}px, ${transform.top}px)`
             }}
           >
             <canvas width={width} height={height} ref={this.getContainer} />

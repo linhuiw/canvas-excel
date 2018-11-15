@@ -10,7 +10,11 @@ const DEFAULT_CONFIG: Partial<ExcelConfig> = {
   data: [[]],
   fontSize: 14,
   fontFamily: 'Microsoft YaHei',
-  lineColor: '#ededed'
+  lineColor: '#ededed',
+  offset: {
+    top: 0,
+    left: 0
+  }
 };
 
 export { DEFAULT_CONFIG };

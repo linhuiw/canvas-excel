@@ -11,6 +11,7 @@ import { CELL_WIDTH, CELL_HEIGHT } from './const';
 class Excel {
   config: ExcelConfig;
   canvasContext: CanvasRenderingContext2D;
+  paintInstance: Paint;
   constructor(config: Partial<ExcelConfig>) {
     this.config = {
       ...DEFAULT_CONFIG,
@@ -26,7 +27,7 @@ class Excel {
     this.canvasContext = container.getContext('2d') as CanvasRenderingContext2D;
     this.getRatio();
     this.setCanvas();
-    new Paint(this.canvasContext, this.config);
+    this.paintInstance = new Paint(this.canvasContext, this.config);
   }
   /**
    * 设置画布的基础设置
@@ -58,6 +59,20 @@ class Excel {
       width: cols * CELL_WIDTH,
       height: rows * CELL_HEIGHT
     };
+  }
+  setOffset(top: number, left: number) {
+    this.config = {
+      ...this.config,
+      offset: {
+        top,
+        left
+      }
+    };
+  }
+  repaint() {
+    requestAnimationFrame(() => {
+      this.paintInstance.render(this.config);
+    });
   }
 }
 

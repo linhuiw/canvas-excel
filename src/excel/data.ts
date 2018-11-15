@@ -2,7 +2,6 @@
  * @author linhuiw
  * @desc 筛选得到绘图区域数据
  */
-import * as _ from 'lodash';
 import { ExcelConfig, CellData } from './types';
 import { CELL_HEIGHT, CELL_WIDTH } from './const';
 import { DEFAULT_CONFIG } from './config';
@@ -14,8 +13,7 @@ const pretreatmentData = function(data: CellData[][] | undefined) {
   if (!data) {
     return DEFAULT_CONFIG.data;
   }
-  const cloneData = _.cloneDeep(data);
-  return cloneData.map((row: CellData[], rowIndex: number) => {
+  return data.map((row: CellData[], rowIndex: number) => {
     return row.map((cell: CellData, colIndex: number) => {
       return {
         ...cell,

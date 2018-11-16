@@ -71,7 +71,6 @@ class Paint {
         CELL_HEIGHT - 2
       );
     }
-    // this.canvasContext.rect(startX, startY, CELL_WIDTH, CELL_HEIGHT);
     this.canvasContext.fillStyle = '#000';
     this.canvasContext.fillText(
       String(cell.v),
@@ -84,9 +83,13 @@ class Paint {
    * 渲染全部单元格
    */
   paintCells() {
+    const { fontFamily, fontSize } = this.config;
     const data = filterData(this.config);
     this.canvasContext.save();
     this.paintLines(data);
+    this.canvasContext.font = `normal ${fontSize}px ${fontFamily}`;
+    this.canvasContext.textBaseline = 'middle';
+    this.canvasContext.textAlign = 'center';
     /** 从最后开始渲染，保障冻结得行列在最上面 */
     for (let rowNumber = data.length - 1; rowNumber >= 0; rowNumber--) {
       const row = data[rowNumber];
@@ -103,25 +106,40 @@ class Paint {
    * @param data
    */
   paintLines(data: CellData[][]) {
-    const { width, height, containerRect, lineColor } = this.config;
+    const {
+      width,
+      height,
+      containerRect,
+      offset,
+      freezeCol,
+      freezeRow
+    } = this.config;
     this.canvasContext.beginPath();
     /** 绘制外边框 */
-    this.canvasContext.moveTo(0, 0);
-    this.canvasContext.lineTo(0, containerRect.height);
-    this.canvasContext.lineTo(containerRect.width, containerRect.height);
-    this.canvasContext.lineTo(containerRect.width, 0);
-    this.canvasContext.lineTo(0, 0);
+    this.canvasContext.rect(
+      0,
+      0,
+      containerRect.width - offset.left - 0.5,
+      containerRect.height - offset.top - 0.5
+    );
+    /** 冻结线的行列坐标 */
+    const freezeStartX = freezeCol * CELL_WIDTH;
+    const freezeStartY = freezeRow * CELL_HEIGHT;
     /** 绘制横线 */
-    data.map(row => {
+    data.map((row, index) => {
       const { startY } = this.getStartXY(row[0]._colIndex, row[0]._rowIndex);
-      this.canvasContext.moveTo(0.5, startY);
-      this.canvasContext.lineTo(width + 0.5, startY);
+      if (startY > freezeStartY) {
+        this.canvasContext.moveTo(0.5, startY);
+        this.canvasContext.lineTo(width + 0.5, startY);
+      }
     });
     /** 绘制竖线 */
     data[0].map(col => {
       const { startX } = this.getStartXY(col._colIndex, col._rowIndex);
-      this.canvasContext.moveTo(startX, 0.5);
-      this.canvasContext.lineTo(startX, height + 0.5);
+      if (startX > freezeStartX) {
+        this.canvasContext.moveTo(startX, 0.5);
+        this.canvasContext.lineTo(startX, height + 0.5);
+      }
     });
     this.canvasContext.stroke();
   }

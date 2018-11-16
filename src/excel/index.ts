@@ -8,7 +8,7 @@ import { DEFAULT_CONFIG } from './config';
 import { Paint } from './paint';
 import { CELL_WIDTH, CELL_HEIGHT } from './const';
 import { pretreatmentData } from './data';
-import { xyToIndex } from './utils/';
+import { xyToIndex, updateHighDpiContext } from './utils/';
 
 class Excel {
   config: ExcelConfig;
@@ -16,9 +16,15 @@ class Excel {
   paintInstance: Paint;
   constructor(config: Partial<ExcelConfig>) {
     const { container } = config as ExcelConfig;
-    this.canvasContext = container.getContext('2d') as CanvasRenderingContext2D;
+    const canvasContext = container.getContext(
+      '2d'
+    ) as CanvasRenderingContext2D;
     const data = pretreatmentData(config.data);
-    const ratio = this.getRatio();
+    const ratio = this.getRatio(canvasContext);
+    this.canvasContext = updateHighDpiContext(
+      canvasContext,
+      ratio
+    ) as CanvasRenderingContext2D;
     this.config = {
       ...DEFAULT_CONFIG,
       ...config,
@@ -50,21 +56,20 @@ class Excel {
       ratio
     } = this.config;
     this.canvasContext.lineWidth = 1;
-    this.canvasContext.font = `normal ${fontSize * ratio}px ${fontFamily}`;
+    this.canvasContext.font = `normal ${fontSize}px ${fontFamily}`;
     this.canvasContext.textBaseline = 'middle';
     this.canvasContext.strokeStyle = lineColor;
     this.canvasContext.textAlign = 'center';
+    this.canvasContext.lineJoin = 'round';
     if (ratio !== 1) {
       container.width = width * ratio;
       container.height = height * ratio;
     }
-    this.canvasContext.scale(ratio, ratio);
   }
   /**
    * 获取Ratio，处理高清屏模糊问题
    */
-  getRatio() {
-    const canvasContext: any = this.canvasContext;
+  getRatio(canvasContext: any) {
     const devicePixelRatio = window.devicePixelRatio || 1;
     const backingStoreRatio =
       canvasContext.webkitBackingStorePixelRatio ||

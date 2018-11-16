@@ -50,7 +50,7 @@ class Excel {
       ratio
     } = this.config;
     this.canvasContext.lineWidth = 1;
-    this.canvasContext.font = `normal ${fontSize}px ${fontFamily}`;
+    this.canvasContext.font = `normal ${fontSize * ratio}px ${fontFamily}`;
     this.canvasContext.textBaseline = 'middle';
     this.canvasContext.strokeStyle = lineColor;
     this.canvasContext.textAlign = 'center';

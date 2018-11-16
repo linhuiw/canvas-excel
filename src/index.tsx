@@ -60,7 +60,24 @@ export default class ExcelComponent extends React.Component<Props> {
     this.excelInstance.setOffset(scrollTop, scrollLeft);
     this.excelInstance.repaint();
   };
-
+  /**
+   * 拖拽开始
+   */
+  handleDragStart(event: React.DragEvent<HTMLCanvasElement>) {
+    const { clientX, clientY } = event;
+    console.log(clientX, clientY, '======');
+  }
+  /**
+   * 拖拽中
+   */
+  handleDrag(event: React.DragEvent<HTMLCanvasElement>) {
+    const { clientX, clientY } = event;
+    console.log(clientX, clientY, '======');
+  }
+  /**
+   * 拖拽结束
+   */
+  handleDragEnd() {}
   render() {
     const { width = 0, height = 0 } = this.config;
     const { containerRect, transform, ratio } = this.state;
@@ -94,7 +111,14 @@ export default class ExcelComponent extends React.Component<Props> {
               }px) scale(${1 / ratio})`
             }}
           >
-            <canvas width={width} height={height} ref={this.getContainer} />
+            <canvas
+              onDragStart={this.handleDragStart}
+              onDrag={this.handleDrag}
+              onDragEnd={this.handleDrag}
+              width={width}
+              height={height}
+              ref={this.getContainer}
+            />
           </div>
         </div>
       </div>

@@ -112,6 +112,19 @@ class Excel {
     });
   }
   /**
+   *
+   */
+  setDragOffset(
+    start: {
+      x: number;
+      y: number;
+    },
+    end: {
+      x: number;
+      y: number;
+    }
+  ) {}
+  /**
    * 添加点击事件
    */
   addClickEvent() {

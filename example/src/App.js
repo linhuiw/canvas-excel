@@ -2,7 +2,7 @@ import React, {
   Component
 } from 'react'
 
-import ExampleComponent from 'canvas-excel'
+import ExampleComponent from 'canvas-excel';
 
 export default class App extends Component {
   constructor(props) {

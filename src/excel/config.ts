@@ -5,8 +5,8 @@
 import { ExcelConfig } from './types';
 
 const DEFAULT_CONFIG: Partial<ExcelConfig> = {
-  width: 1000,
-  height: 800,
+  width: 800,
+  height: 600,
   freezeCol: 0,
   freezeRow: 0,
   data: [[]],

@@ -20,6 +20,7 @@ export default class ExcelComponent extends React.Component<Props> {
       width: 0,
       height: 0
     },
+    ratio: 1,
     transform: {
       top: 0,
       left: 0
@@ -41,7 +42,8 @@ export default class ExcelComponent extends React.Component<Props> {
       container
     });
     this.setState({
-      containerRect: this.excelInstance.config.containerRect
+      containerRect: this.excelInstance.config.containerRect,
+      ratio: this.excelInstance.config.ratio
     });
   }
   /**
@@ -61,7 +63,7 @@ export default class ExcelComponent extends React.Component<Props> {
 
   render() {
     const { width, height } = this.config;
-    const { containerRect, transform } = this.state;
+    const { containerRect, transform, ratio } = this.state;
 
     return (
       <div
@@ -89,7 +91,15 @@ export default class ExcelComponent extends React.Component<Props> {
               transform: `translate(${transform.left}px, ${transform.top}px)`
             }}
           >
-            <canvas width={width} height={height} ref={this.getContainer} />
+            <canvas
+              width={width}
+              height={height}
+              ref={this.getContainer}
+              style={{
+                transform: `scale(${1 / ratio})`,
+                transformOrigin: 'top left'
+              }}
+            />
           </div>
         </div>
       </div>

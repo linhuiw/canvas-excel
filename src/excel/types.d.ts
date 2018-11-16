@@ -32,6 +32,8 @@ interface ExcelConfig {
     top: number;
     left: number;
   };
+  /** ratio Retina 屏幕兼容 */
+  ratio: number;
   /** 所有单元格占得宽高 */
   containerRect: {
     width: number;

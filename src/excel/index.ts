@@ -115,10 +115,10 @@ class Excel {
    * 添加点击事件
    */
   addClickEvent() {
-    const { container } = this.config;
+    const { container, ratio } = this.config;
     container.addEventListener('click', (event: MouseEvent) => {
       const { offsetX, offsetY } = event;
-      const cell = xyToIndex(offsetX, offsetY, this.config);
+      const cell = xyToIndex(offsetX / ratio, offsetY / ratio, this.config);
       this.repaint(cell);
     });
   }

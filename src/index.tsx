@@ -103,12 +103,10 @@ export default class ExcelComponent extends React.Component<Props> {
           <div
             className="container"
             style={{
-              width: width * 2,
-              height: height * 2,
+              width: width,
+              height: height,
               transformOrigin: 'top left',
-              transform: `translate(${transform.left}px, ${
-                transform.top
-              }px) scale(${1 / ratio})`
+              transform: `translate(${transform.left}px, ${transform.top}px)`
             }}
           >
             <canvas
@@ -117,6 +115,10 @@ export default class ExcelComponent extends React.Component<Props> {
               onDragEnd={this.handleDrag}
               width={width}
               height={height}
+              style={{
+                width: width,
+                height: height
+              }}
               ref={this.getContainer}
             />
           </div>

@@ -131,7 +131,7 @@ class Excel {
     const { container, ratio } = this.config;
     container.addEventListener('click', (event: MouseEvent) => {
       const { offsetX, offsetY } = event;
-      const cell = xyToIndex(offsetX / ratio, offsetY / ratio, this.config);
+      const cell = xyToIndex(offsetX, offsetY, this.config);
       this.repaint(cell);
     });
   }

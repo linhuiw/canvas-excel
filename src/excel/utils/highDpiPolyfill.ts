@@ -31,7 +31,9 @@ const ratioArgs = {
 };
 
 function updateHighDpiContext(context, pixelRatio) {
-  if (pixelRatio === 1) return;
+  if (pixelRatio === 1) {
+    return context;
+  }
   const prototype = context;
 
   forEach(ratioArgs, function(value, key) {

@@ -80,7 +80,6 @@ export default class ExcelComponent extends React.Component<Props> {
       x: clientX,
       y: clientY
     });
-    console.log(clientX, clientY, '======Drag');
   };
   render() {
     const { width = 0, height = 0 } = this.config;

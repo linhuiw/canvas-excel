@@ -3,7 +3,7 @@
  * @desc 绘制 Excel 表格
  */
 import { ExcelConfig, CellData } from './types';
-import { CELL_WIDTH, CELL_HEIGHT } from './const';
+import { CELL_WIDTH, CELL_HEIGHT, FILL_STYLE } from './const';
 import { filterData } from './data';
 import { context } from './context';
 
@@ -19,6 +19,9 @@ class Paint {
   render() {
     this.clear();
     this.paintCells();
+    if (context.config.range && context.config.range.length) {
+      this.paintRange();
+    }
   }
   /**
    * 清理画布
@@ -175,6 +178,34 @@ class Paint {
       4,
       4
     );
+    this.canvasContext.stroke();
+    this.canvasContext.restore();
+  }
+  /**
+   * 渲染高亮的单元格区域
+   */
+  paintRange() {
+    const { activeColor, offset, range } = context.config;
+    const [start, end] = range;
+    let endX, endY;
+    this.canvasContext.save();
+    this.canvasContext.beginPath();
+    this.canvasContext.strokeStyle = activeColor;
+    this.canvasContext.fillStyle = activeColor;
+    const startX = start.col * CELL_WIDTH - offset.left;
+    const startY = start.row * CELL_HEIGHT - offset.top;
+    if (end) {
+      endX = end.col * CELL_WIDTH - offset.left;
+      endY = end.row * CELL_HEIGHT - offset.top;
+    } else {
+      endX = startX + CELL_WIDTH;
+      endY = startY + CELL_HEIGHT;
+    }
+    this.canvasContext.rect(startX, startY, endX - startX, endY - startY);
+    this.canvasContext.fillRect(endX - 2, endY - 2, 4, 4);
+    this.canvasContext.fillStyle = FILL_STYLE;
+
+    this.canvasContext.fillRect(startX, startY, endX - startX, endY - startY);
     this.canvasContext.stroke();
     this.canvasContext.restore();
   }

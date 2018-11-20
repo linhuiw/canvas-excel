@@ -17,7 +17,8 @@ const DEFAULT_CONFIG: Partial<ExcelConfig> = {
   offset: {
     top: 0,
     left: 0
-  }
+  },
+  range: []
 };
 
 export { DEFAULT_CONFIG };

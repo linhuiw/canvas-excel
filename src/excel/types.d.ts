@@ -39,8 +39,18 @@ interface ExcelConfig {
     width: number;
     height: number;
   };
+  range: CellPositon[];
 }
 
+/**
+ * 单元格位置信息
+ */
+interface CellPositon {
+  /** 所在行 */
+  row: number;
+  /** 所在列 */
+  col: number;
+}
 /**
  * 单个单元格的数据配置
  */

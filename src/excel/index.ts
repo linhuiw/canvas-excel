@@ -129,13 +129,30 @@ class Excel {
       y: number;
     }
   ) {
+    let range = context.config.range;
     if (start) {
       const startCell = xyToIndex(start.x, start.y, context.config);
+      range = [
+        {
+          row: startCell._rowIndex,
+          col: startCell._colIndex
+        }
+      ];
     }
     if (end) {
       const endCell = xyToIndex(end.x, end.y, context.config);
+      range = [
+        range[0],
+        {
+          row: endCell._rowIndex,
+          col: endCell._colIndex
+        }
+      ];
     }
-    console.log(start, end, '====');
+    context.setConfig({
+      range
+    });
+    this.repaint();
   }
   /**
    * 添加点击事件

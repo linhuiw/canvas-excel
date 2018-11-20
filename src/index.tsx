@@ -7,6 +7,7 @@ import * as React from 'react';
 import { Excel } from './excel';
 import { ExcelConfig } from './excel/types';
 import { DEFAULT_CONFIG } from './excel/config';
+import { context } from './excel/context';
 
 type Props = {
   config: Partial<ExcelConfig>;
@@ -42,8 +43,8 @@ export default class ExcelComponent extends React.Component<Props> {
       container
     });
     this.setState({
-      containerRect: this.excelInstance.config.containerRect,
-      ratio: this.excelInstance.config.ratio
+      containerRect: context.config.containerRect,
+      ratio: context.config.ratio
     });
   }
   /**

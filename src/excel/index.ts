@@ -9,9 +9,9 @@ import { Paint } from './paint';
 import { CELL_WIDTH, CELL_HEIGHT } from './const';
 import { pretreatmentData } from './data';
 import { xyToIndex, updateHighDpiContext } from './utils/';
+import { context } from './context';
 
 class Excel {
-  config: ExcelConfig;
   canvasContext: CanvasRenderingContext2D;
   paintInstance: Paint;
   constructor(config: Partial<ExcelConfig>) {
@@ -25,13 +25,14 @@ class Excel {
       canvasContext,
       ratio
     ) as CanvasRenderingContext2D;
-    this.config = {
+    const allConfig = {
       ...DEFAULT_CONFIG,
       ...config,
       data,
       ratio,
       containerRect: this.getContainerRect(data)
     } as ExcelConfig;
+    context.setConfig(allConfig);
     this.initCanvas();
     this.addClickEvent();
   }
@@ -40,7 +41,7 @@ class Excel {
    */
   initCanvas() {
     this.setCanvas();
-    this.paintInstance = new Paint(this.canvasContext, this.config);
+    this.paintInstance = new Paint(this.canvasContext, context.config);
   }
   /**
    * 设置画布的基础设置
@@ -54,7 +55,7 @@ class Excel {
       lineColor,
       container,
       ratio
-    } = this.config;
+    } = context.config;
     this.canvasContext.lineWidth = 1;
     this.canvasContext.font = `normal ${fontSize}px ${fontFamily}`;
     this.canvasContext.textBaseline = 'middle';
@@ -97,20 +98,19 @@ class Excel {
    * @param left
    */
   setOffset(top: number, left: number) {
-    this.config = {
-      ...this.config,
+    context.setConfig({
       offset: {
         top,
         left
       }
-    };
+    });
   }
   /**
    * 重新渲染
    */
   repaint(cell?: CellData) {
     requestAnimationFrame(() => {
-      this.paintInstance.render(this.config);
+      this.paintInstance.render();
       if (cell) {
         this.paintInstance.paintActiveCell(cell);
       }
@@ -130,10 +130,10 @@ class Excel {
     }
   ) {
     if (start) {
-      const startCell = xyToIndex(start.x, start.y, this.config);
+      const startCell = xyToIndex(start.x, start.y, context.config);
     }
     if (end) {
-      const endCell = xyToIndex(end.x, end.y, this.config);
+      const endCell = xyToIndex(end.x, end.y, context.config);
     }
     console.log(start, end, '====');
   }
@@ -141,10 +141,10 @@ class Excel {
    * 添加点击事件
    */
   addClickEvent() {
-    const { container, ratio } = this.config;
+    const { container, ratio } = context.config;
     container.addEventListener('click', (event: MouseEvent) => {
       const { offsetX, offsetY } = event;
-      const cell = xyToIndex(offsetX, offsetY, this.config);
+      const cell = xyToIndex(offsetX, offsetY, context.config);
       this.repaint(cell);
     });
   }

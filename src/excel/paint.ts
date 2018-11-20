@@ -5,22 +5,18 @@
 import { ExcelConfig, CellData } from './types';
 import { CELL_WIDTH, CELL_HEIGHT } from './const';
 import { filterData } from './data';
+import { context } from './context';
 
 class Paint {
-  config: ExcelConfig;
   canvasContext: CanvasRenderingContext2D;
   constructor(canvasContext: CanvasRenderingContext2D, config: ExcelConfig) {
-    this.config = config;
     this.canvasContext = canvasContext;
     this.render();
   }
   /**
    * 绘制
    */
-  render(config?: ExcelConfig) {
-    if (config) {
-      this.config = config;
-    }
+  render() {
     this.clear();
     this.paintCells();
   }
@@ -28,14 +24,14 @@ class Paint {
    * 清理画布
    */
   clear() {
-    const { width, height } = this.config;
+    const { width, height } = context.config;
     this.canvasContext.clearRect(0, 0, width, height);
   }
   /**
    *
    */
   getStartXY(colIndex: number, rowIndex: number) {
-    const { offset, freezeCol, freezeRow } = this.config;
+    const { offset, freezeCol, freezeRow } = context.config;
     let startX, startY;
     if (colIndex < freezeCol) {
       startX = colIndex * CELL_WIDTH;
@@ -57,7 +53,7 @@ class Paint {
    * 渲染单元格内容
    */
   paintCell(cell: CellData) {
-    const { freezeCol, freezeRow } = this.config;
+    const { freezeCol, freezeRow } = context.config;
     const { startX, startY } = this.getStartXY(cell._colIndex, cell._rowIndex);
 
     if (cell._colIndex < freezeCol || cell._rowIndex < freezeRow) {
@@ -83,8 +79,8 @@ class Paint {
    * 渲染全部单元格
    */
   paintCells() {
-    const { fontFamily, fontSize } = this.config;
-    const data = filterData(this.config);
+    const { fontFamily, fontSize } = context.config;
+    const data = filterData(context.config);
     this.canvasContext.save();
     this.paintLines(data);
     this.canvasContext.font = `normal ${fontSize}px ${fontFamily}`;
@@ -113,7 +109,7 @@ class Paint {
       offset,
       freezeCol,
       freezeRow
-    } = this.config;
+    } = context.config;
     this.canvasContext.beginPath();
     /** 绘制外边框 */
     this.canvasContext.rect(
@@ -147,7 +143,7 @@ class Paint {
    * 绘制冻结表示线
    */
   paintFreezeLines() {
-    const { freezeCol, freezeRow, width, height, activeColor } = this.config;
+    const { freezeCol, freezeRow, width, height, activeColor } = context.config;
     const startX = freezeCol * CELL_WIDTH;
     const startY = freezeRow * CELL_HEIGHT;
     this.canvasContext.save();
@@ -164,7 +160,7 @@ class Paint {
    * 渲染高亮的单元格
    */
   paintActiveCell(cell: CellData) {
-    const { activeColor, offset } = this.config;
+    const { activeColor, offset } = context.config;
     this.canvasContext.save();
     this.canvasContext.beginPath();
     this.canvasContext.strokeStyle = activeColor;

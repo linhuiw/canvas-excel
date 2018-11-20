@@ -63,21 +63,24 @@ export default class ExcelComponent extends React.Component<Props> {
   /**
    * 拖拽开始
    */
-  handleDragStart(event: React.DragEvent<HTMLCanvasElement>) {
+  handleDragStart = (event: React.DragEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = event;
-    console.log(clientX, clientY, '======');
-  }
+    this.excelInstance.setDragOffset({
+      x: clientX,
+      y: clientY
+    });
+  };
   /**
    * 拖拽中
    */
-  handleDrag(event: React.DragEvent<HTMLCanvasElement>) {
+  handleDrag = (event: React.DragEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = event;
-    console.log(clientX, clientY, '======');
-  }
-  /**
-   * 拖拽结束
-   */
-  handleDragEnd() {}
+    this.excelInstance.setDragOffset(undefined, {
+      x: clientX,
+      y: clientY
+    });
+    console.log(clientX, clientY, '======Drag');
+  };
   render() {
     const { width = 0, height = 0 } = this.config;
     const { containerRect, transform, ratio } = this.state;
@@ -110,6 +113,7 @@ export default class ExcelComponent extends React.Component<Props> {
             }}
           >
             <canvas
+              draggable
               onDragStart={this.handleDragStart}
               onDrag={this.handleDrag}
               onDragEnd={this.handleDrag}

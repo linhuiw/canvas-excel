@@ -120,15 +120,23 @@ class Excel {
    *
    */
   setDragOffset(
-    start: {
+    start?: {
       x: number;
       y: number;
     },
-    end: {
+    end?: {
       x: number;
       y: number;
     }
-  ) {}
+  ) {
+    if (start) {
+      const startCell = xyToIndex(start.x, start.y, this.config);
+    }
+    if (end) {
+      const endCell = xyToIndex(end.x, end.y, this.config);
+    }
+    console.log(start, end, '====');
+  }
   /**
    * 添加点击事件
    */

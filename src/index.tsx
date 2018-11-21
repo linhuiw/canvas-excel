@@ -76,6 +76,9 @@ export default class ExcelComponent extends React.Component<Props> {
    */
   handleDrag = (event: React.DragEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = event;
+    if (!clientX && !clientY) {
+      return;
+    }
     this.excelInstance.setDragOffset(undefined, {
       x: clientX,
       y: clientY

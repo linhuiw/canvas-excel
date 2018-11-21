@@ -144,21 +144,24 @@ class Paint {
   paintRange() {
     const { activeColor, offset, range } = context.config;
     const [start, end] = range;
-    let endX, endY;
+    let endX, endY, startX, startY;
     this.canvasContext.save();
     this.canvasContext.beginPath();
     this.canvasContext.strokeStyle = activeColor;
     this.canvasContext.fillStyle = activeColor;
-    const startX = start.col * CELL_WIDTH - offset.left;
-    const startY = start.row * CELL_HEIGHT - offset.top;
+    startX = start.col * CELL_WIDTH - offset.left;
+    startY = start.row * CELL_HEIGHT - offset.top;
     if (end) {
+      /** 扩展选择区域 */
       if (end.col < start.col) {
         endX = end.col * CELL_WIDTH - offset.left;
+        startX = (start.col + 1) * CELL_WIDTH - offset.left;
       } else {
         endX = (end.col + 1) * CELL_WIDTH - offset.left;
       }
       if (end.row < start.row) {
         endY = end.row * CELL_HEIGHT - offset.top;
+        startY = (start.row + 1) * CELL_HEIGHT - offset.top;
       } else {
         endY = (end.row + 1) * CELL_HEIGHT - offset.top;
       }

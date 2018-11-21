@@ -108,12 +108,9 @@ class Excel {
   /**
    * 重新渲染
    */
-  repaint(cell?: CellData) {
+  repaint() {
     requestAnimationFrame(() => {
       this.paintInstance.render();
-      if (cell) {
-        this.paintInstance.paintActiveCell(cell);
-      }
     });
   }
   /**
@@ -162,7 +159,15 @@ class Excel {
     container.addEventListener('click', (event: MouseEvent) => {
       const { offsetX, offsetY } = event;
       const cell = xyToIndex(offsetX, offsetY, context.config);
-      this.repaint(cell);
+      context.setConfig({
+        range: [
+          {
+            row: cell._rowIndex,
+            col: cell._colIndex
+          }
+        ]
+      });
+      this.repaint();
     });
   }
 }

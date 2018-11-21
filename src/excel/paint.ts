@@ -173,8 +173,16 @@ class Paint {
     const startX = start.col * CELL_WIDTH - offset.left;
     const startY = start.row * CELL_HEIGHT - offset.top;
     if (end) {
-      endX = (end.col + 1) * CELL_WIDTH - offset.left;
-      endY = (end.row + 1) * CELL_HEIGHT - offset.top;
+      if (end.col < start.col) {
+        endX = end.col * CELL_WIDTH - offset.left;
+      } else {
+        endX = (end.col + 1) * CELL_WIDTH - offset.left;
+      }
+      if (end.row < start.row) {
+        endY = end.row * CELL_HEIGHT - offset.top;
+      } else {
+        endY = (end.row + 1) * CELL_HEIGHT - offset.top;
+      }
     } else {
       endX = startX + CELL_WIDTH;
       endY = startY + CELL_HEIGHT;

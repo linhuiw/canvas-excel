@@ -10,6 +10,7 @@ import { CELL_WIDTH, CELL_HEIGHT } from './const';
 import { pretreatmentData } from './data';
 import { xyToIndex, updateHighDpiContext } from './utils/';
 import { context } from './context';
+import { getStartXY } from './utils/xyToIndex';
 
 class Excel {
   canvasContext: CanvasRenderingContext2D;
@@ -34,7 +35,6 @@ class Excel {
     } as ExcelConfig;
     context.setConfig(allConfig);
     this.initCanvas();
-    this.addClickEvent();
   }
   /**
    * 初始化画布设置
@@ -128,7 +128,7 @@ class Excel {
   ) {
     let range = context.config.range;
     if (start) {
-      const startCell = xyToIndex(start.x, start.y, context.config);
+      const startCell = xyToIndex(start.x, start.y);
       range = [
         {
           row: startCell._rowIndex,
@@ -137,7 +137,7 @@ class Excel {
       ];
     }
     if (end) {
-      const endCell = xyToIndex(end.x, end.y, context.config);
+      const endCell = xyToIndex(end.x, end.y);
       range = [
         range[0],
         {
@@ -152,23 +152,19 @@ class Excel {
     this.repaint();
   }
   /**
-   * 添加点击事件
+   * 根据坐标获取对应的单元格元素
    */
-  addClickEvent() {
-    const { container, ratio } = context.config;
-    container.addEventListener('click', (event: MouseEvent) => {
-      const { offsetX, offsetY } = event;
-      const cell = xyToIndex(offsetX, offsetY, context.config);
-      context.setConfig({
-        range: [
-          {
-            row: cell._rowIndex,
-            col: cell._colIndex
-          }
-        ]
-      });
-      this.repaint();
-    });
+  getCell(x: number, y: number) {
+    const cell = xyToIndex(x, y);
+    const startPostion = getStartXY(cell._colIndex, cell._rowIndex);
+
+    return {
+      ...cell,
+      top: startPostion.startY,
+      left: startPostion.startX,
+      width: CELL_WIDTH,
+      height: CELL_HEIGHT
+    };
   }
 }
 

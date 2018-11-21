@@ -6,6 +6,7 @@ import { ExcelConfig, CellData } from './types';
 import { CELL_WIDTH, CELL_HEIGHT, FILL_STYLE } from './const';
 import { filterData } from './data';
 import { context } from './context';
+import { getStartXY } from './utils/xyToIndex';
 
 class Paint {
   canvasContext: CanvasRenderingContext2D;
@@ -31,33 +32,11 @@ class Paint {
     this.canvasContext.clearRect(0, 0, width, height);
   }
   /**
-   *
-   */
-  getStartXY(colIndex: number, rowIndex: number) {
-    const { offset, freezeCol, freezeRow } = context.config;
-    let startX, startY;
-    if (colIndex < freezeCol) {
-      startX = colIndex * CELL_WIDTH;
-    } else {
-      startX = colIndex * CELL_WIDTH - offset.left;
-    }
-    if (rowIndex < freezeRow) {
-      /** 冻结行 */
-      startY = rowIndex * CELL_HEIGHT;
-    } else {
-      startY = rowIndex * CELL_HEIGHT - offset.top;
-    }
-    return {
-      startX,
-      startY
-    };
-  }
-  /**
    * 渲染单元格内容
    */
   paintCell(cell: CellData) {
     const { freezeCol, freezeRow } = context.config;
-    const { startX, startY } = this.getStartXY(cell._colIndex, cell._rowIndex);
+    const { startX, startY } = getStartXY(cell._colIndex, cell._rowIndex);
 
     if (cell._colIndex < freezeCol || cell._rowIndex < freezeRow) {
       /** 渲染冻结区域的背景 */
@@ -126,7 +105,7 @@ class Paint {
     const freezeStartY = freezeRow * CELL_HEIGHT;
     /** 绘制横线 */
     data.map((row, index) => {
-      const { startY } = this.getStartXY(row[0]._colIndex, row[0]._rowIndex);
+      const { startY } = getStartXY(row[0]._colIndex, row[0]._rowIndex);
       if (startY > freezeStartY) {
         this.canvasContext.moveTo(0.5, startY);
         this.canvasContext.lineTo(width + 0.5, startY);
@@ -134,7 +113,7 @@ class Paint {
     });
     /** 绘制竖线 */
     data[0].map(col => {
-      const { startX } = this.getStartXY(col._colIndex, col._rowIndex);
+      const { startX } = getStartXY(col._colIndex, col._rowIndex);
       if (startX > freezeStartX) {
         this.canvasContext.moveTo(startX, 0.5);
         this.canvasContext.lineTo(startX, height + 0.5);

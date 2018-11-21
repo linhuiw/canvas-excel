@@ -44,6 +44,16 @@ class Excel {
     this.paintInstance = new Paint(this.canvasContext, context.config);
   }
   /**
+   * 更新配置信息
+   */
+  updateConfig(config: Partial<ExcelConfig>) {
+    context.setConfig({
+      ...config,
+      data: pretreatmentData(config.data)
+    });
+    this.paintInstance.render();
+  }
+  /**
    * 设置画布的基础设置
    */
   setCanvas() {

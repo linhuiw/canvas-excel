@@ -39,6 +39,7 @@ function getStartXY(colIndex: number, rowIndex: number) {
   } else {
     startY = rowIndex * CELL_HEIGHT - offset.top;
   }
+
   return {
     startX,
     startY

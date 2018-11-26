@@ -8,6 +8,13 @@
 
 Demo: https://linhuiw.github.io/canvas-excel/
 
+## Features
+
+- [x] Scroll canvas table
+- [x] Freeze cols & rows
+- [x] Range select & Edit cell
+- [ ] Drag to edit row height & column width
+
 ## Install
 
 ```bash

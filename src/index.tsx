@@ -18,6 +18,7 @@ export default class ExcelComponent extends React.Component<Props> {
   getContainer: React.RefObject<HTMLCanvasElement>;
   getInput: React.RefObject<HTMLInputElement>;
   config: Partial<ExcelConfig>;
+  containerRect: DOMRect | ClientRect;
   state = {
     containerRect: {
       width: 0,
@@ -51,6 +52,9 @@ export default class ExcelComponent extends React.Component<Props> {
   }
   componentDidMount() {
     const container = this.getContainer.current as HTMLCanvasElement;
+    if (this.getContainer.current) {
+      this.containerRect = this.getContainer.current.getBoundingClientRect();
+    }
     this.excelInstance = new Excel({
       ...this.config,
       container
@@ -80,9 +84,11 @@ export default class ExcelComponent extends React.Component<Props> {
   handleDragStart = (event: React.DragEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = event;
     this.hideInput();
+    const x = clientX - this.containerRect.left;
+    const y = clientY - this.containerRect.top;
     this.excelInstance.setDragOffset({
-      x: clientX,
-      y: clientY
+      x,
+      y
     });
   };
   /**
@@ -90,12 +96,14 @@ export default class ExcelComponent extends React.Component<Props> {
    */
   handleDrag = (event: React.DragEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = event;
+    const x = clientX - this.containerRect.left;
+    const y = clientY - this.containerRect.top;
     if (!clientX && !clientY) {
       return;
     }
     this.excelInstance.setDragOffset(undefined, {
-      x: clientX,
-      y: clientY
+      x,
+      y
     });
   };
   /**
@@ -105,8 +113,8 @@ export default class ExcelComponent extends React.Component<Props> {
     const { clientX, clientY } = event;
     this.updateValue();
     this.excelInstance.setDragOffset({
-      x: clientX,
-      y: clientY
+      x: clientX - this.containerRect.left,
+      y: clientY - this.containerRect.top
     });
   };
 
@@ -115,7 +123,10 @@ export default class ExcelComponent extends React.Component<Props> {
    */
   handleDbClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const { clientX, clientY } = event;
-    const cell = this.excelInstance.getCell(clientX, clientY);
+    const cell = this.excelInstance.getCell(
+      clientX - this.containerRect.left,
+      clientY - this.containerRect.top
+    );
 
     this.setState({
       input: {

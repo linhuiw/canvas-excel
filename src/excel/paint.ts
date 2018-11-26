@@ -139,36 +139,52 @@ class Paint {
     this.canvasContext.restore();
   }
   /**
+   * 扩展选择区域
+   */
+  getExpandRange() {
+    const { range } = context.config;
+    const [start, end] = range;
+    let startPosition = { ...start },
+      endPosition = { ...end };
+
+    if (end) {
+      /** 扩展选择区域 */
+      if (end.col < start.col) {
+        startPosition.col = start.col + 1;
+      } else {
+        endPosition.col = end.col + 1;
+      }
+      if (end.row < start.row) {
+        startPosition.row = start.row + 1;
+      } else {
+        endPosition.row = end.row + 1;
+      }
+    }
+
+    const { startX, startY } = getStartXY(startPosition.col, startPosition.row);
+    const { startX: endX, startY: endY } = getStartXY(
+      endPosition.col,
+      endPosition.row
+    );
+    return {
+      startX,
+      startY,
+      endX,
+      endY
+    };
+  }
+  /**
    * 渲染高亮的单元格区域
    */
   paintRange() {
-    const { activeColor, offset, range } = context.config;
-    const [start, end] = range;
-    let endX, endY, startX, startY;
+    const { activeColor } = context.config;
+    const { startX, startY, endX, endY } = this.getExpandRange();
+
     this.canvasContext.save();
     this.canvasContext.beginPath();
     this.canvasContext.strokeStyle = activeColor;
     this.canvasContext.fillStyle = activeColor;
-    startX = start.col * CELL_WIDTH - offset.left;
-    startY = start.row * CELL_HEIGHT - offset.top;
-    if (end) {
-      /** 扩展选择区域 */
-      if (end.col < start.col) {
-        endX = end.col * CELL_WIDTH - offset.left;
-        startX = (start.col + 1) * CELL_WIDTH - offset.left;
-      } else {
-        endX = (end.col + 1) * CELL_WIDTH - offset.left;
-      }
-      if (end.row < start.row) {
-        endY = end.row * CELL_HEIGHT - offset.top;
-        startY = (start.row + 1) * CELL_HEIGHT - offset.top;
-      } else {
-        endY = (end.row + 1) * CELL_HEIGHT - offset.top;
-      }
-    } else {
-      endX = startX + CELL_WIDTH;
-      endY = startY + CELL_HEIGHT;
-    }
+
     this.canvasContext.rect(startX, startY, endX - startX, endY - startY);
     this.canvasContext.fillRect(endX - 2, endY - 2, 4, 4);
     this.canvasContext.fillStyle = FILL_STYLE;

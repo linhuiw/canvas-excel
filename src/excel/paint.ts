@@ -145,7 +145,9 @@ class Paint {
     const { range, freezeCol, freezeRow } = context.config;
     const [start, end] = range;
     let startPosition = { ...start },
-      endPosition = { ...end };
+      endPosition = { ...end },
+      endX,
+      endY;
 
     if (end) {
       /** 扩展选择区域 */
@@ -162,15 +164,17 @@ class Paint {
     }
     const freezeX = freezeCol * CELL_WIDTH;
     const freezeY = freezeRow * CELL_HEIGHT;
-
     const { x: startX, y: startY } = getXyPosition(
       startPosition.col,
       startPosition.row
     );
-    const { x: endX, y: endY } = getXyPosition(
-      endPosition.col,
-      endPosition.row
-    );
+    if (end) {
+      endY = getXyPosition(endPosition.col, endPosition.row).y;
+      endX = getXyPosition(endPosition.col, endPosition.row).x;
+    } else {
+      endX = getXyPosition(startPosition.col + 1, startPosition.row + 1).x;
+      endY = getXyPosition(startPosition.col + 1, startPosition.row + 1).y;
+    }
     /**
      * 不覆盖到冻结区域
      */
@@ -187,7 +191,10 @@ class Paint {
   paintRange() {
     const { activeColor } = context.config;
     const { startX, startY, endX, endY } = this.getExpandRange();
-
+    /** 不显示选择区间 */
+    if (startX === endX || startY === endY) {
+      return;
+    }
     this.canvasContext.save();
     this.canvasContext.beginPath();
     this.canvasContext.strokeStyle = activeColor;

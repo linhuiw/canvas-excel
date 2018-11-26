@@ -174,7 +174,7 @@ export default class ExcelComponent extends React.Component<Props> {
       );
     }
     this.hideInput();
-    this.excelInstance.updateConfig(this.config);
+    this.excelInstance.updateConfig({ data: this.config.data });
   }
   /**
    * 隐藏输入框
@@ -264,7 +264,6 @@ export default class ExcelComponent extends React.Component<Props> {
               ref={this.getInput}
               value={input.value}
               onKeyPress={this.handleInputKey}
-              onBlur={this.hideInput}
               onChange={this.handleValueChange}
             />
           </div>

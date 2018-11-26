@@ -6,7 +6,7 @@ import { ExcelConfig, CellData } from './types';
 import { CELL_WIDTH, CELL_HEIGHT, FILL_STYLE } from './const';
 import { filterData } from './data';
 import { context } from './context';
-import { getStartXY } from './utils/xyToIndex';
+import { getXyPosition } from './utils/xyToIndex';
 
 class Paint {
   canvasContext: CanvasRenderingContext2D;
@@ -36,15 +36,15 @@ class Paint {
    */
   paintCell(cell: CellData) {
     const { freezeCol, freezeRow } = context.config;
-    const { startX, startY } = getStartXY(cell._colIndex, cell._rowIndex);
+    const { x, y } = getXyPosition(cell._colIndex, cell._rowIndex);
 
     if (cell._colIndex < freezeCol || cell._rowIndex < freezeRow) {
       /** 渲染冻结区域的背景 */
       this.canvasContext.fillStyle = '#FFF';
       /** 填满除边框外区域 */
       this.canvasContext.fillRect(
-        startX + 1,
-        startY + 1,
+        x + 1,
+        y + 1,
         CELL_WIDTH - 2,
         CELL_HEIGHT - 2
       );
@@ -52,8 +52,8 @@ class Paint {
     this.canvasContext.fillStyle = '#000';
     this.canvasContext.fillText(
       String(cell.v),
-      startX + CELL_WIDTH / 2,
-      startY + CELL_HEIGHT / 2,
+      x + CELL_WIDTH / 2,
+      y + CELL_HEIGHT / 2,
       CELL_WIDTH
     );
   }
@@ -105,18 +105,18 @@ class Paint {
     const freezeStartY = freezeRow * CELL_HEIGHT;
     /** 绘制横线 */
     data.map((row, index) => {
-      const { startY } = getStartXY(row[0]._colIndex, row[0]._rowIndex);
-      if (startY > freezeStartY) {
-        this.canvasContext.moveTo(0.5, startY);
-        this.canvasContext.lineTo(width + 0.5, startY);
+      const { y } = getXyPosition(row[0]._colIndex, row[0]._rowIndex);
+      if (y > freezeStartY) {
+        this.canvasContext.moveTo(0.5, y);
+        this.canvasContext.lineTo(width + 0.5, y);
       }
     });
     /** 绘制竖线 */
     data[0].map(col => {
-      const { startX } = getStartXY(col._colIndex, col._rowIndex);
-      if (startX > freezeStartX) {
-        this.canvasContext.moveTo(startX, 0.5);
-        this.canvasContext.lineTo(startX, height + 0.5);
+      const { x } = getXyPosition(col._colIndex, col._rowIndex);
+      if (x > freezeStartX) {
+        this.canvasContext.moveTo(x, 0.5);
+        this.canvasContext.lineTo(x, height + 0.5);
       }
     });
     this.canvasContext.stroke();
@@ -142,7 +142,7 @@ class Paint {
    * 扩展选择区域
    */
   getExpandRange() {
-    const { range } = context.config;
+    const { range, freezeCol, freezeRow } = context.config;
     const [start, end] = range;
     let startPosition = { ...start },
       endPosition = { ...end };
@@ -160,17 +160,25 @@ class Paint {
         endPosition.row = end.row + 1;
       }
     }
+    const freezeX = freezeCol * CELL_WIDTH;
+    const freezeY = freezeRow * CELL_HEIGHT;
 
-    const { startX, startY } = getStartXY(startPosition.col, startPosition.row);
-    const { startX: endX, startY: endY } = getStartXY(
+    const { x: startX, y: startY } = getXyPosition(
+      startPosition.col,
+      startPosition.row
+    );
+    const { x: endX, y: endY } = getXyPosition(
       endPosition.col,
       endPosition.row
     );
+    /**
+     * 不覆盖到冻结区域
+     */
     return {
-      startX,
-      startY,
-      endX,
-      endY
+      startX: Math.max(freezeX, startX),
+      startY: Math.max(freezeY, startY),
+      endX: Math.max(freezeX, endX),
+      endY: Math.max(freezeY, endY)
     };
   }
   /**

@@ -10,7 +10,7 @@ import { CELL_WIDTH, CELL_HEIGHT } from './const';
 import { pretreatmentData } from './data';
 import { xyToIndex, updateHighDpiContext } from './utils/';
 import { context } from './context';
-import { getStartXY } from './utils/xyToIndex';
+import { getXyPosition } from './utils/xyToIndex';
 
 class Excel {
   canvasContext: CanvasRenderingContext2D;
@@ -166,12 +166,12 @@ class Excel {
    */
   getCell(x: number, y: number) {
     const cell = xyToIndex(x, y);
-    const startPostion = getStartXY(cell._colIndex, cell._rowIndex);
+    const startPostion = getXyPosition(cell._colIndex, cell._rowIndex);
 
     return {
       ...cell,
-      top: startPostion.startY,
-      left: startPostion.startX,
+      top: startPostion.y,
+      left: startPostion.x,
       width: CELL_WIDTH,
       height: CELL_HEIGHT
     };

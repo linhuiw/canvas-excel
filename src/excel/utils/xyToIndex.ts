@@ -25,25 +25,25 @@ function xyToIndex(offsetX: number, offsetY: number) {
  * @param col
  * @param row
  */
-function getStartXY(colIndex: number, rowIndex: number) {
+function getXyPosition(colIndex: number, rowIndex: number) {
   const { offset, freezeCol, freezeRow } = context.config;
-  let startX, startY;
+  let x, y;
   if (colIndex < freezeCol) {
-    startX = colIndex * CELL_WIDTH;
+    x = colIndex * CELL_WIDTH;
   } else {
-    startX = colIndex * CELL_WIDTH - offset.left;
+    x = colIndex * CELL_WIDTH - offset.left;
   }
   if (rowIndex < freezeRow) {
     /** 冻结行 */
-    startY = rowIndex * CELL_HEIGHT;
+    y = rowIndex * CELL_HEIGHT;
   } else {
-    startY = rowIndex * CELL_HEIGHT - offset.top;
+    y = rowIndex * CELL_HEIGHT - offset.top;
   }
 
   return {
-    startX,
-    startY
+    x,
+    y
   };
 }
 
-export { xyToIndex, getStartXY };
+export { xyToIndex, getXyPosition };

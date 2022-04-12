@@ -1,4 +1,4 @@
-# canvas-excel
+# 📊 canvas-excel
 
 > online excel built with canvas
 
